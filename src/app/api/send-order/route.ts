@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { updateProductStatus } from '../../../lib/products';
 import { revalidatePath } from 'next/cache';
+import type { Product } from '@/lib/products';
+
 
 export async function POST(req: NextRequest) {
   const { name, email, phone, products, total } = await req.json();
@@ -14,7 +16,7 @@ export async function POST(req: NextRequest) {
   for (const p of products) {
     try {
       await updateProductStatus(p.id, 'vendido', email);
-    } catch (err) {
+    } catch {
       return NextResponse.json({ error: `No se pudo actualizar el producto ${p.id}` }, { status: 500 });
     }
   }
@@ -33,13 +35,14 @@ export async function POST(req: NextRequest) {
 
   const valeriaEmail = process.env.EMAIL_RECIPIENT; // TODO: Replace with real email
 
-  const productList = products.map((p: any) =>
+  const productList = products.map((p: Product) =>
     `- [${p.id}] ${p.title} (${p.brand}${p.size ? ' - ' + p.size : ''}) - ${p.price}`
   ).join('\n');
 
   const orderDetails = `
 Pedido de Feria Americana Valeria\n\n
 Nombre comprador: ${name}\nEmail comprador: ${email}\nTeléfono: ${phone}\n\nProductos:\n${productList}\n\nTotal: $${total.toLocaleString()}
+\nNota: Tu compra será reservada por 48 horas para coordinar el pago y retiro/entrega. Muchas gracias!
 `;
 
   try {
@@ -58,7 +61,7 @@ Nombre comprador: ${name}\nEmail comprador: ${email}\nTeléfono: ${phone}\n\nPro
       text: `¡Gracias por tu compra!\n\n${orderDetails}`,
     });
     return NextResponse.json({ ok: true });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: 'No se pudo enviar el email.' }, { status: 500 });
   }
 } 

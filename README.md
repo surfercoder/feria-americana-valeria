@@ -1,55 +1,117 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Feria Americana Valeria
 
-## Getting Started
+This is a modern e-commerce web application for a second-hand clothing fair, built with [Next.js](https://nextjs.org) and [Supabase](https://supabase.com). It features a responsive product catalog, shopping cart, and order submission with email notifications.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Functionality
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Product Catalog:** Browse a grid of second-hand clothing items, filter by availability, and view product details.
+- **Responsive UI:** The product grid adapts to all screen sizes for a seamless mobile and desktop experience.
+- **Shopping Cart:** Add items to your cart, review your selection, and proceed to checkout.
+- **Order Submission:** Submit your order with contact details; products are marked as sold and both buyer and admin receive email confirmations.
+- **Admin/Owner Integration:** Products and their statuses are managed via Supabase, with easy seeding from CSV.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠 Frameworks & Libraries
 
-## Learn More
+- **Framework:** [Next.js 15](https://nextjs.org/) (App Router, SSR, API routes)
+- **Database & Auth:** [Supabase](https://supabase.com/) (Postgres, Row Level Security, REST API)
+- **UI Library:** [Tailwind CSS](https://tailwindcss.com/) (utility-first styling), [shadcn/ui](https://ui.shadcn.com/) (customizable React components)
+- **Component Libraries:** 
+  - [Radix UI](https://www.radix-ui.com/) (primitives, accessibility)
+  - [Lucide React](https://lucide.dev/) (icon set)
+- **Image Processing:** [sharp](https://sharp.pixelplumbing.com/), [imagemin](https://github.com/imagemin/imagemin), [heic-convert](https://www.npmjs.com/package/heic-convert)
+- **CSV Parsing:** [PapaParse](https://www.papaparse.com/)
+- **Email:** [Nodemailer](https://nodemailer.com/) (order notifications)
+- **Virtualized Lists:** [react-window](https://react-window.vercel.app/) (efficient product grid rendering)
+- **Other Utilities:** 
+  - [clsx](https://github.com/lukeed/clsx), [class-variance-authority](https://cva.style/) (conditional class names)
+  - [dotenv](https://github.com/motdotla/dotenv) (environment variables)
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📦 Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `src/app/` — Main Next.js app directory (pages, layouts, API routes, cart context)
+- `src/components/` — UI and product grid components
+- `src/components/ui/` — Reusable UI primitives (Button, Card, Badge, Input)
+- `src/lib/` — Supabase client, seeding scripts, utility functions, SQL schema
+- `feeding-data.csv` — Source data for products
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🗄 Database
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Supabase Table:** `products`
+  - Fields: `id`, `title`, `color`, `description`, `brand`, `size`, `price`, `other`, `status`, `buyer`, `image`
+  - Row Level Security enabled (open for development)
+- **Seeding:** Run `npx tsx src/lib/seedSupabaseProducts.ts` to import products from `feeding-data.csv`.
 
-## Supabase Integration
+---
 
-1. Create a `.env.local` file in the project root with:
+## 🖥️ UI/UX
 
-```
-NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-```
+- **shadcn/ui** components for consistent, accessible design
+- **Tailwind CSS** for rapid, utility-first styling
+- **Responsive grid** with `react-window` for performance
+- **Dark mode** support via CSS variables
 
-2. Run the SQL in `src/lib/supabaseSchema.sql` in your Supabase SQL editor to create the `products` table.
+---
 
-3. Seed the database with products:
+## 📧 Order Flow
 
-```
-npx tsx src/lib/seedSupabaseProducts.ts
-```
+- User adds products to cart and submits order with name, email, and phone.
+- API endpoint `/api/send-order`:
+  - Marks products as sold in Supabase
+  - Sends confirmation emails to both admin and buyer using Nodemailer
+  - Revalidates homepage to update product statuses
 
-This will populate your Supabase `products` table with the data from `feeding-data.csv`.
+---
+
+## ⚙️ Setup & Development
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+2. **Configure environment:**
+   - Create `.env.local` with:
+     ```
+     NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+     NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+     EMAIL_SENDER=your-email@gmail.com
+     GOOGLE_APP_PASSWORD=your-app-password
+     EMAIL_RECIPIENT=admin-email@example.com
+     ```
+3. **Set up Supabase:**
+   - Run the SQL in `src/lib/supabaseSchema.sql` in your Supabase SQL editor.
+   - Seed products:
+     ```bash
+     npx tsx src/lib/seedSupabaseProducts.ts
+     ```
+4. **Start the dev server:**
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## 📝 Notable Packages
+
+- `@supabase/supabase-js`, `@supabase/ssr`
+- `next`, `react`, `react-dom`
+- `tailwindcss`, `tw-animate-css`
+- `@radix-ui/react-slot`, `lucide-react`
+- `nodemailer`, `papaparse`, `sharp`, `imagemin`, `heic-convert`
+- `react-window`, `clsx`, `class-variance-authority`
+
+---
+
+## 📚 Further Reading
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Supabase Documentation](https://supabase.com/docs)
+- [shadcn/ui Docs](https://ui.shadcn.com/)
+- [Tailwind CSS Docs](https://tailwindcss.com/docs)

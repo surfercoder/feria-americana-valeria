@@ -6,11 +6,25 @@ import path from 'path';
 import Papa from 'papaparse';
 import { supabase } from './supabaseClient';
 
+type RawProductRow = {
+  id: string;
+  Prenda: string;
+  Color: string;
+  Descripcion: string;
+  Marca: string;
+  Talle: string;
+  Valor: string;
+  Otros: string;
+  Estado?: string;
+  Vendido?: string;
+  Compradora?: string;
+};
+
 async function seed() {
   const csvPath = path.join(process.cwd(), 'feeding-data.csv');
   const file = fs.readFileSync(csvPath, 'utf8');
   const parsed = Papa.parse(file, { header: true, skipEmptyLines: true });
-  const products = (parsed.data as any[]).map((row) => {
+  const products = (parsed.data as RawProductRow[]).map((row) => {
     const id = Number(row.id);
     const image = `${id}.webp`;
     return {

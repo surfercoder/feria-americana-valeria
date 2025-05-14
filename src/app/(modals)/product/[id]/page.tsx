@@ -7,8 +7,9 @@ export async function generateStaticParams() {
   return products.map((product) => ({ id: String(product.id) }));
 }
 
-export default async function ProductModal({ params }: { params: { id: string } }) {
-  const { id } = await params;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function Page({ params }: any) {
+  const { id } = params;
   const product = await getProductById(id);
   if (!product) return null;
 

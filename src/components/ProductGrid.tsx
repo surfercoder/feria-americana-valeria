@@ -6,12 +6,12 @@ import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useCart } from "../app/cart-context";
+import type { Product } from "@/lib/products";
 
 const SOLD_STATUSES = ["vendido", "sold", "vendido ", "vendida", "vendida "];
 const SKELETON_COUNT = 16;
 const COLUMN_COUNT = 4;
 const ROW_HEIGHT = 480;
-const CARD_WIDTH = 320;
 
 function SkeletonCard() {
   return (
@@ -26,7 +26,7 @@ function getColumnCount() {
   return COLUMN_COUNT;
 }
 
-export default function ProductGrid({ products }: { products: any[] }) {
+export default function ProductGrid({ products }: { products: Product[] }) {
   const { cartItems, addToCart } = useCart();
   const [isLoading, setIsLoading] = useState(true);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -85,7 +85,7 @@ export default function ProductGrid({ products }: { products: any[] }) {
 
   if (!mounted) return <div style={{ height: 800 }} />;
 
-  const Cell = ({ columnIndex, rowIndex, style }: any) => {
+  const Cell = ({ columnIndex, rowIndex, style }: { columnIndex: number; rowIndex: number; style: React.CSSProperties }) => {
     const index = rowIndex * columnCount + columnIndex;
     if (isLoading) {
       return (
@@ -95,7 +95,7 @@ export default function ProductGrid({ products }: { products: any[] }) {
       );
     }
     if (index >= products.length) return null;
-    const product = products[index];
+    const product: Product = products[index];
     const isSold = SOLD_STATUSES.includes(product.status.trim().toLowerCase());
     const isInCart = cartItems.includes(product.id);
     return (

@@ -1,7 +1,7 @@
 // Only load dotenv if not running in Next.js (i.e., in a Node.js script)
 if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  require('dotenv').config({ path: '.env.local' });
+  // Use dynamic import for dotenv to avoid require()
+  import('dotenv').then(dotenv => dotenv.config({ path: '.env.local' }));
 }
 
 import { createClient } from '@supabase/supabase-js';

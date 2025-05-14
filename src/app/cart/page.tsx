@@ -82,7 +82,7 @@ export default function CartPage() {
       setPhone('');
       if (formRef.current) formRef.current.reset();
       router.push('/thanks');
-    } catch (err) {
+    } catch {
       setError('Hubo un error al enviar el pedido. Intenta de nuevo.');
     } finally {
       setLoading(false);
