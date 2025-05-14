@@ -1,5 +1,7 @@
 # Feria Americana Valeria
 
+[![View Live](https://img.shields.io/badge/View%20Live-App-blue?style=for-the-badge)](https://feria-americana-valeria.vercel.app/)
+
 This is a modern e-commerce web application for a second-hand clothing fair, built with [Next.js](https://nextjs.org) and [Supabase](https://supabase.com). It features a responsive product catalog, shopping cart, and order submission with email notifications.
 
 ---
