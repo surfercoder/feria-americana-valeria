@@ -96,7 +96,7 @@ export default function ProductGrid({ products }: { products: Product[] }) {
     }
     if (index >= products.length) return null;
     const product: Product = products[index];
-    const isSold = SOLD_STATUSES.includes(product.status.trim().toLowerCase());
+    const isSold = SOLD_STATUSES.includes((product.status ?? '').trim().toLowerCase());
     const isInCart = cartItems.includes(product.id);
     return (
       <div style={{ ...style, width: cardWidth, maxWidth: 480, padding: 4 }}>

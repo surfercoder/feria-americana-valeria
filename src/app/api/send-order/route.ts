@@ -39,9 +39,13 @@ export async function POST(req: NextRequest) {
     `- [${p.id}] ${p.title} (${p.brand}${p.size ? ' - ' + p.size : ''}) - ${p.price}`
   ).join('\n');
 
+  // Format WhatsApp link
+  const phoneDigits = String(phone).replace(/\D/g, '');
+  const whatsappLink = `https://wa.me/${phoneDigits}`;
+
   const orderDetails = `
 Pedido de Feria Americana Valeria\n\n
-Nombre comprador: ${name}\nEmail comprador: ${email}\nTeléfono: ${phone}\n\nProductos:\n${productList}\n\nTotal: $${total.toLocaleString()}
+Nombre comprador: ${name}\nEmail comprador: ${email}\nWhatsApp: ${whatsappLink}\n\nProductos:\n${productList}\n\nTotal: $${total.toLocaleString()}
 \nNota: Tu compra será reservada por 48 horas para coordinar el pago y retiro/entrega. Muchas gracias!
 `;
 
