@@ -121,7 +121,12 @@ export default function ProductGrid({ products }: { products: Product[] }) {
               </div>
             </Link>
             {isSold && (
-              <span className="absolute top-1 right-1 bg-red-600 text-white text-xs px-2 py-1 rounded z-10 font-bold tracking-wide uppercase">VENDIDO</span>
+              <span
+                className="absolute top-4 left-1/2 -translate-x-1/2 bg-red-600 text-white text-xs px-8 py-1 rounded font-bold tracking-wide uppercase z-10 shadow-lg"
+                style={{ transform: 'translateX(-50%) rotate(-45deg)' }}
+              >
+                VENDIDO
+              </span>
             )}
           </CardHeader>
           <CardContent className="flex flex-col flex-1 p-2 pt-1 justify-between">
