@@ -1,43 +1,51 @@
 const fs = require('fs');
 const path = require('path');
+const heicConvert = require('heic-convert');
 const sharp = require('sharp');
 
 const imagesDir = path.join(__dirname, 'public', 'images');
-const MAX_SIZE = 1024 * 1024; // 1MB
-const MIN_QUALITY = 40; // Don't go below this quality
 
-async function compressToWebpUnder1MB(inputPath, outputPath) {
-  let quality = 80;
-  let buffer;
-  while (quality >= MIN_QUALITY) {
-    buffer = await sharp(inputPath)
-      .webp({ quality })
-      .toBuffer();
-    if (buffer.length <= MAX_SIZE) {
-      await fs.promises.writeFile(outputPath, buffer);
-      return quality;
-    }
-    quality -= 10;
-  }
-  // If we exit the loop, save the lowest quality version
-  await fs.promises.writeFile(outputPath, buffer);
-  return quality;
+async function convertHeicToJpegAndWebp(filePath) {
+  const inputBuffer = fs.readFileSync(filePath);
+  // Convert HEIC to JPEG
+  const jpegBuffer = await heicConvert({
+    buffer: inputBuffer,
+    format: 'JPEG',
+    quality: 0.8 // slightly more compression
+  });
+  const jpegPath = filePath.replace(/\.heic$/i, '.jpeg');
+  // Compress JPEG with sharp
+  const compressedJpegBuffer = await sharp(jpegBuffer)
+    .jpeg({ quality: 80 })
+    .toBuffer();
+  fs.writeFileSync(jpegPath, compressedJpegBuffer);
+  console.log(`Converted & compressed: ${path.basename(filePath)} -> ${path.basename(jpegPath)}`);
+
+  // Convert to WebP with sharp
+  const webpPath = filePath.replace(/\.heic$/i, '.webp');
+  const webpBuffer = await sharp(jpegBuffer)
+    .webp({ quality: 80 })
+    .toBuffer();
+  fs.writeFileSync(webpPath, webpBuffer);
+  console.log(`Created WebP: ${path.basename(filePath)} -> ${path.basename(webpPath)}`);
 }
 
-(async () => {
-  const files = await fs.promises.readdir(imagesDir);
-  const jpgFiles = files.filter(f => /\.jpe?g$/i.test(f));
-
-  for (const file of jpgFiles) {
-    const inputPath = path.join(imagesDir, file);
-    const outputFile = file.replace(/\.jpe?g$/i, '.webp');
-    const outputPath = path.join(imagesDir, outputFile);
+async function main() {
+  const files = fs.readdirSync(imagesDir);
+  const heicFiles = files.filter(f => f.match(/\.heic$/i));
+  if (heicFiles.length === 0) {
+    console.log('No HEIC files found.');
+    return;
+  }
+  for (const file of heicFiles) {
+    const filePath = path.join(imagesDir, file);
     try {
-      const finalQuality = await compressToWebpUnder1MB(inputPath, outputPath);
-      const stats = await fs.promises.stat(outputPath);
-      console.log(`Converted: ${file} -> ${outputFile} | Size: ${(stats.size/1024).toFixed(1)}KB | Quality: ${finalQuality}`);
+      await convertHeicToJpegAndWebp(filePath);
     } catch (err) {
       console.error(`Failed to convert ${file}:`, err);
     }
   }
-})();
+  console.log('All conversions done.');
+}
+
+main();
